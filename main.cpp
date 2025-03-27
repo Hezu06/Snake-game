@@ -14,7 +14,7 @@ int main(int argc, char* args[]) {
 		SDL_Window* window = initSDL();
 		SDL_Renderer* renderer = createRenderer(window);
 		bool start = false;
-
+		Music music;
 		while (!start) {
 			renderStartScreen(window, renderer);
 			renderPressStart(renderer);
@@ -35,22 +35,27 @@ int main(int argc, char* args[]) {
 					SDL_RenderClear(renderer);
 					// game loop
 					Uint32 lastMoveTime = 0;
-					const float snakeSpeed = 120;
+					float snakeSpeed = 120;
 
 					while (running) {
 						if (!paused) {
 							Uint32 currentTime = SDL_GetTicks();
 							handleInput(snake, renderer);
 							if (snake.eatFood(food)) {
+								Mix_PlayChannel(-1, music.eatSound, 0);
 								food = generateFood(snake.getBody());
 								score += 10; // update score if snake eats food
+								if (score % 100 == 0) {
+									snakeSpeed -= 10;
+								}
 							}
 							if (currentTime - lastMoveTime >= snakeSpeed) {
 								snake.move();
 								lastMoveTime = currentTime;
 
 								if (snake.checkCollision()) {
-									showGameOver(renderer, snake, score);
+									Mix_PlayChannel(-1, music.gameOverSound, 0);
+									showGameOver(renderer, snake, score, food);
 								}
 
 								SDL_RenderClear(renderer);
@@ -60,6 +65,7 @@ int main(int argc, char* args[]) {
 								renderPauseButton(renderer);
 								renderPlayerScore(renderer, score);
 								SDL_RenderPresent(renderer);
+								Mix_HaltChannel(-1);
 							}
 						}
 						else {
@@ -71,7 +77,7 @@ int main(int argc, char* args[]) {
 				}
 			}
 		}
-
+		music.~music();
 		cleanUp(window, renderer);
 	}
 	return 0;

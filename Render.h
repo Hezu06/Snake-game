@@ -2,6 +2,7 @@
 #include "Header.h"
 #include "Globals.h"
 #include "Snake.h"
+#include "Music.h"
 #include"defs.h"
 
 void logErrorAndExit(const char* msg, const char* error);
@@ -26,4 +27,4 @@ void renderFood(SDL_Renderer* renderer, SDL_Point food);
 
 void renderPlayerScore(SDL_Renderer* renderer, int& score);
 
-void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score);
+void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point food);

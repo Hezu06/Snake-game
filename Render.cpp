@@ -153,7 +153,7 @@ void renderPlayerScore(SDL_Renderer* renderer, int& score) {
 	SDL_DestroyTexture(textTexture);
 }
 
-void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score)
+void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point food)
 {
 	TTF_Font* font = TTF_OpenFont("Font/SuperPixel-m2L8j.ttf", 24);
 	if (!font) {
@@ -200,6 +200,7 @@ void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score)
 	TTF_CloseFont(font);
 
 	SDL_Event wait;
+
 	while (true) {
 		SDL_WaitEvent(&wait);
 		if (wait.type == SDL_QUIT) {
@@ -210,6 +211,7 @@ void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score)
 			if (wait.button.x >= 280 && wait.button.x <= 430 && wait.button.y >= 300 && wait.button.y <= 350) { // restart
 				score = 0; // reset score
 				snake = Snake(300, 300); // reset snake
+				food = generateFood(snake.getBody());
 				break;
 			}
 			else if (wait.button.x >= 510 && wait.button.x <= 585 && wait.button.y >= 300 && wait.button.y <= 350) { // exit
