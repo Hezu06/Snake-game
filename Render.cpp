@@ -4,7 +4,7 @@
 
 void drawGameplayBackground(SDL_Window* window, SDL_Renderer* renderer) {
 	// render background
-	SDL_Rect background;
+	SDL_Rect background{};
 	background.x = 0;
 	background.y = 0;
 	background.w = SCREEN_WIDTH;
@@ -168,7 +168,7 @@ void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point fo
 	SDL_Color textColor = { 255, 255, 255 };
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Game Over", textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_Rect textRect = { 362.5, 250, textSurface->w, textSurface->h };
+	SDL_Rect textRect = { 362, 250, textSurface->w, textSurface->h };
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
 	SDL_Rect restartButton = { 280, 300, 150, 50 };
