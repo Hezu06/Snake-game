@@ -1,7 +1,7 @@
 #include "GameEngine.h"
 
 SDL_Point generateFood(const std::vector <SDL_Point>& snakeBody) {
-	SDL_Point food;
+	SDL_Point food{};
 	bool valid;
 	do {
 		valid = true;
@@ -40,17 +40,18 @@ void handleInput(Snake& snake, SDL_Renderer* renderer) {
 			}
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (event.button.x >= 850 && event.button.x <= 900 && event.button.y >= 0 && event.button.y <= 50) {
+			if (event.button.x >= 850 && event.button.x <= 900 && event.button.y >= 0 && event.button.y <= 50) { // pause button
 				if (!paused) {
 					renderPauseScreen(renderer);
 					paused = true;
 				}
 			}
-			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 400 && event.button.y <= 500) {
+			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 400 && event.button.y <= 500) { // resume button
 				paused = false;
 			}
-			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 500 && event.button.y <= 600) {
+			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 500 && event.button.y <= 600) { // restart button
 				paused = false;
+				snake.setSnakeSpeed(120);
 				score = 0; // reset score
 				snake = Snake(300, 300); // reset snake
 			}
