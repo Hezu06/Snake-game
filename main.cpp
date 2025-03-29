@@ -39,14 +39,13 @@ int main(int argc, char* args[]) {
 					while (running) {
 						if (!paused) {
 							int snakeSpeed = snake.getSnakeSpeed();
-							std::cout << snakeSpeed << std::endl;
 							Uint32 currentTime = SDL_GetTicks();
 							handleInput(snake, renderer);
 							if (snake.eatFood(food)) {
 								Mix_PlayChannel(-1, music.eatSound, 0);
 								food = generateFood(snake.getBody());
 								score += 10; 
-								if (score % 100 == 0) {
+								if (snakeSpeed >= 10 && score % 100 == 0) {
 									snake.setSnakeSpeed(snakeSpeed - 10);
 								}
 							}
