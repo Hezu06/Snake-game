@@ -22,6 +22,10 @@ public:
 
 	void setDirection(Direction newDirection);
 
+	int getSnakeSpeed() const;
+
+	void setSnakeSpeed(int speed);
+
 	bool checkCollision();
 
 	void render(SDL_Renderer* renderer);
@@ -30,4 +34,5 @@ private:
 	Direction direction;
 	bool hasEaten = false;
 	static constexpr int snakeSize = 25;
+	int snakeSpeed = 120;
 };

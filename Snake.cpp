@@ -52,6 +52,14 @@ void Snake::setDirection(Direction newDirection) {
 	}
 }
 
+int Snake::getSnakeSpeed() const{
+	return snakeSpeed;
+}
+
+void Snake::setSnakeSpeed(int speed) {
+	Snake::snakeSpeed = speed;
+}
+
 bool Snake::checkCollision() {
 	SDL_Point head = body.front();
 	if (head.x < 200 || head.x >= 700 || head.y < 100 || head.y >= 600) {
