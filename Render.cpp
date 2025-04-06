@@ -45,7 +45,7 @@ void renderStartScreen(SDL_Window* window, SDL_Renderer* renderer)
 }
 
 void renderPressStart(SDL_Renderer* renderer) {
-	TTF_Font* font = TTF_OpenFont("Font/VeniteAdoremus-italic.ttf", 24);
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 24);
 	if (!font) {
 		SDL_Log("Failed to load font: %s", TTF_GetError());
 		return;
@@ -85,7 +85,7 @@ void renderPauseButton(SDL_Renderer* renderer) {
 
 void renderPauseScreen(SDL_Renderer* renderer) {
 	SDL_RenderClear(renderer);
-	TTF_Font* font = TTF_OpenFont("Font/Montserrat-Regular.ttf", 36);
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 36);
 	if (!font) {
 		SDL_Log("Failed to load font: %s", TTF_GetError());
 		return;
@@ -135,7 +135,7 @@ void renderFood(SDL_Renderer* renderer, SDL_Point food) {
 }
 
 void renderPlayerScore(SDL_Renderer* renderer, int& score) {
-	TTF_Font* font = TTF_OpenFont("Font/Montserrat-Regular.ttf", 24);
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 24);
 	if (!font) {
 		SDL_Log("Failed to load font : %s", TTF_GetError());
 		return;
@@ -155,7 +155,7 @@ void renderPlayerScore(SDL_Renderer* renderer, int& score) {
 
 void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point food)
 {
-	TTF_Font* font = TTF_OpenFont("Font/SuperPixel-m2L8j.ttf", 24);
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 24);
 	if (!font) {
 		SDL_Log("Failed to load font : %s", TTF_GetError());
 		return;
@@ -168,16 +168,16 @@ void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point fo
 	SDL_Color textColor = { 255, 255, 255 };
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Game Over", textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_Rect textRect = { 362, 250, textSurface->w, textSurface->h };
+	SDL_Rect textRect = { 355, 250, textSurface->w, textSurface->h };
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
-	SDL_Rect restartButton = { 280, 300, 150, 50 };
+	SDL_Rect restartButton = { 280, 300, 175, 50 };
 	SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
-	SDL_RenderFillRect(renderer, &restartButton);
+	SDL_RenderFillRect(renderer, &restartButton); // render green rect for restart
 
-	SDL_Rect exitButton = { 510, 300, 75, 50 };
+	SDL_Rect exitButton = { 510, 300, 100, 50 };
 	SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
-	SDL_RenderFillRect(renderer, &exitButton);
+	SDL_RenderFillRect(renderer, &exitButton); // render red rect for exit
 
 	SDL_Surface* restartSurface = TTF_RenderText_Solid(font, "Restart", textColor);
 	SDL_Texture* restartTexture = SDL_CreateTextureFromSurface(renderer, restartSurface);
@@ -208,13 +208,13 @@ void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point fo
 			break;
 		}
 		if (wait.type == SDL_MOUSEBUTTONDOWN) {
-			if (wait.button.x >= 280 && wait.button.x <= 430 && wait.button.y >= 300 && wait.button.y <= 350) { // restart
+			if (wait.button.x >= 280 && wait.button.x <= 455 && wait.button.y >= 300 && wait.button.y <= 350) { // restart
 				score = 0; // reset score
 				snake = Snake(300, 300); // reset snake
 				food = generateFood(snake.getBody());
 				break;
 			}
-			else if (wait.button.x >= 510 && wait.button.x <= 585 && wait.button.y >= 300 && wait.button.y <= 350) { // exit
+			else if (wait.button.x >= 510 && wait.button.x <= 610 && wait.button.y >= 300 && wait.button.y <= 350) { // exit
 				running = false;
 				break;
 			}
