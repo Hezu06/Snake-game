@@ -37,6 +37,15 @@ void handleInput(Snake& snake, SDL_Renderer* renderer) {
 			case SDLK_d: case SDLK_RIGHT:
 				snake.setDirection(Snake::RIGHT);
 				break;
+			case SDLK_ESCAPE: // pause game
+				if (!paused) {
+					renderPauseScreen(renderer);
+					paused = true;
+				}
+				else {
+					paused = false;
+				}
+				break;
 			}
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -51,10 +60,21 @@ void handleInput(Snake& snake, SDL_Renderer* renderer) {
 			}
 			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 500 && event.button.y <= 600) { // restart button
 				paused = false;
-				snake.setSnakeSpeed(120);
+				snake.setSnakeSpeed(120);				
 				score = 0; // reset score
 				snake = Snake(300, 300); // reset snake
 			}
 		}
+	}
+}
+
+void updateScoreFile(int score) {
+	std::ofstream scoreFile("score.txt", std::ios::app);
+	if (scoreFile.is_open()) {
+		scoreFile << score << "\n";
+		scoreFile.close();
+	}
+	else {
+		std::cerr << "Unable to open score file." << std::endl;
 	}
 }

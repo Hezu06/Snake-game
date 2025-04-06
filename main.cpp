@@ -33,8 +33,18 @@ int main(int argc, char* args[]) {
 					Snake snake(300, 300);
 					SDL_Point food = generateFood(snake.getBody());
 					SDL_RenderClear(renderer);
+
 					// game loop
 					Uint32 lastMoveTime = 0;
+
+					std::ofstream scoreFile("score.txt"); // tao file score.txt
+					if (scoreFile.is_open()) {
+						scoreFile << 0 << "\n";  
+						scoreFile.close();
+					}
+					else {
+						std::cerr << "Unable to open score file." << std::endl;
+					}
 
 					while (running) {
 						if (!paused) {
@@ -55,6 +65,7 @@ int main(int argc, char* args[]) {
 
 								if (snake.checkCollision()) {
 									Mix_PlayChannel(-1, music.gameOverSound, 0);
+									updateScoreFile(score);
 									showGameOver(renderer, snake, score, food);
 								}
 
@@ -78,6 +89,7 @@ int main(int argc, char* args[]) {
 			}
 		}
 		music.~music();
+		remove("score.txt");
 		cleanUp(window, renderer);
 	}
 	return 0;
