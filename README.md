@@ -1,1 +1,1 @@
-# SDL_Learning
+# Snake game
