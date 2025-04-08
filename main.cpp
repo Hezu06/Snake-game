@@ -7,6 +7,7 @@
 #include "Music.h"
 
 int main(int argc, char* args[]) {
+	std::vector<int> scores(50, 0);
 	if (!init()) {
 		std::cout << "Failed" << std::endl;
 	}
@@ -14,19 +15,63 @@ int main(int argc, char* args[]) {
 		SDL_Window* window = initSDL();
 		SDL_Renderer* renderer = createRenderer(window);
 		Music music;
-		while (!start) {	
+		while (!start) {
 			renderStartScreen(window, renderer);
-			renderPressStart(renderer);
 			std::cout << "Waiting for player to start the game" << std::endl;
-			SDL_Event event;
-			while (SDL_WaitEvent(&event)) {
-				if (event.type == SDL_QUIT) {
-					running = false;
-					start = true;
-					break;
-				}
-				if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
+			int choice = showMenu(renderer);
+			if (choice == 2) {
+				return 0; 
+			}
+			else if (choice == 1) { // High Score
+				bool inHighScore = true;
+				int scrollOffset = 0;
 
+				while (inHighScore) {
+					renderHighScore(renderer, scores, scrollOffset);
+					SDL_Event e;
+					while (SDL_PollEvent(&e)) {
+						if (e.type == SDL_QUIT) exit(0);
+
+						if (e.type == SDL_KEYDOWN) {
+							if (e.key.keysym.sym == SDLK_ESCAPE) {
+								inHighScore = false;
+							}
+							else if (e.key.keysym.sym == SDLK_DOWN) {
+								if (scrollOffset + 10 < scores.size()) scrollOffset++;
+							}
+							else if (e.key.keysym.sym == SDLK_UP) {
+								if (scrollOffset > 0) scrollOffset--;
+							}
+						}
+
+						if (e.type == SDL_MOUSEBUTTONDOWN) {
+							int mx = e.button.x;
+							int my = e.button.y;
+
+							if (mx >= 620 && mx <= 660 && my >= 50 && my <= 90) { // chon nut X
+								inHighScore = false;
+							}
+						}
+
+						if (e.type == SDL_MOUSEWHEEL) {
+							if (e.wheel.y > 0 && scrollOffset > 0) {
+								scrollOffset--; // coun len
+							}
+							else if (e.wheel.y < 0 && scrollOffset + 10 < scores.size()) {
+								scrollOffset++; // cuon xuong
+							}
+						}
+					}
+				}
+			}
+			else if (choice == 0) { // Play
+				SDL_Event event;
+				while (SDL_WaitEvent(&event)) {
+					if (event.type == SDL_QUIT) {
+						running = false;
+						start = true;
+						break;
+					}
 					drawGameplayBackground(window, renderer);
 					SDL_RenderPresent(renderer);
 					Snake snake(300, 300);
@@ -35,7 +80,7 @@ int main(int argc, char* args[]) {
 
 					std::ofstream scoreFile("score.txt"); // tao file score.txt
 					if (scoreFile.is_open()) {
-						scoreFile << 0 << "\n";  
+						scoreFile << 0 << "\n";
 						scoreFile.close();
 					}
 					else {
@@ -44,10 +89,10 @@ int main(int argc, char* args[]) {
 
 					// game loop
 					Uint32 lastMoveTime = 0;
-					
+
 					while (running) {
 						Uint32 frameStart = SDL_GetTicks();
-						
+
 						if (!paused) {
 							int snakeSpeed = snake.getSnakeSpeed();
 							Uint32 currentTime = SDL_GetTicks();
@@ -55,7 +100,7 @@ int main(int argc, char* args[]) {
 							if (snake.eatFood(food)) {
 								Mix_PlayChannel(-1, music.eatSound, 0);
 								food = generateFood(snake.getBody());
-								score += 10; 
+								score += 10;
 								if (snakeSpeed >= 10 && score % 100 == 0) {
 									snake.setSnakeSpeed(snakeSpeed - 10);
 								}

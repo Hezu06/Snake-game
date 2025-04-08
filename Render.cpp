@@ -44,24 +44,129 @@ void renderStartScreen(SDL_Window* window, SDL_Renderer* renderer)
 	SDL_DestroyTexture(texture);
 }
 
-void renderPressStart(SDL_Renderer* renderer) {
-	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 24);
+void renderMainMenu(SDL_Renderer* renderer, int selected) {
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 36);
 	if (!font) {
 		SDL_Log("Failed to load font: %s", TTF_GetError());
 		return;
 	}
 
-	SDL_Color textColor = { 0, 0, 0 };
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "PRESS SPACE TO PLAY", textColor);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	const char* options[3] = { "Play", "High Score", "Exit" };
 
-	SDL_Rect textRect = { SCREEN_WIDTH / 2 - textSurface->w / 2, SCREEN_HEIGHT - 100, textSurface->w, textSurface->h };
-	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+	for (int i = 0; i < 3; ++i) {
+		SDL_Color color = { 255, 255, 255 }; // White
+		if (i == selected) {
+			color = { 255, 215, 0 }; // Gold for selected
+		}
+
+		SDL_Surface* surface = TTF_RenderText_Solid(font, options[i], color);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+		SDL_Rect dstRect = { 300, 400 + i * 80, surface->w, surface->h };
+		SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+
+		SDL_FreeSurface(surface);
+		SDL_DestroyTexture(texture);
+	}
+
 	SDL_RenderPresent(renderer);
+}
 
-	SDL_FreeSurface(textSurface);
-	SDL_DestroyTexture(textTexture);
+int showMenu(SDL_Renderer* renderer) {
+	int selected = 0;
+	bool inMenu = true;
+
+	while (inMenu) {
+		int mouseX, mouseY;
+		SDL_GetMouseState(&mouseX, &mouseY);
+
+		if (mouseX >= 300 && mouseX <= 600) {
+			if (mouseY >= 400 && mouseY <= 480) selected = 0;
+			else if (mouseY >= 480 && mouseY <= 560) selected = 1;
+			else if (mouseY >= 560 && mouseY <= 640) selected = 2;
+		}
+
+		renderMainMenu(renderer, selected);
+
+		SDL_Event e;
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				return 2; // Exit
+			}
+			if (e.type == SDL_KEYDOWN) {
+				if (e.key.keysym.sym == SDLK_UP) {
+					selected = (selected + 2) % 3;
+				}
+				else if (e.key.keysym.sym == SDLK_DOWN) {
+					selected = (selected + 1) % 3;
+				}
+				else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
+					return selected;
+				}
+			}
+			else if (e.type == SDL_MOUSEBUTTONDOWN) {
+				if (e.button.button == SDL_BUTTON_LEFT) {
+					if (mouseX >= 300 && mouseX <= 600) {
+						if (mouseY >= 400 && mouseY <= 480) return 0; // Play
+						else if (mouseY >= 480 && mouseY <= 560) return 1; // High Score
+						else if (mouseY >= 560 && mouseY <= 640) return 2; // Exit
+					}
+				}
+			}
+		}
+	}
+
+	return selected;
+}
+
+void renderHighScore(SDL_Renderer* renderer, const std::vector<int>& scores, int scrollOffset) {
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 32);
+	if (!font) {
+		SDL_Log("Failed to load font: %s", TTF_GetError());
+		return;
+	}
+	
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+
+	SDL_Color titleColor = { 255, 215, 0 };
+	SDL_Surface* titleSurface = TTF_RenderText_Solid(font, "Leaderboard", titleColor);
+	SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+	SDL_Rect titleRect = { 300, 100, titleSurface->w, titleSurface->h };
+	SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+	SDL_FreeSurface(titleSurface);
+	SDL_DestroyTexture(titleTexture);
+
+	SDL_Color scoreColor = { 255, 255, 255 };
+
+	// Scroll list 
+	int start = scrollOffset;
+	int end = std::min(start + 10, static_cast<int>(scores.size()));
+	for (int i = start; i < end; ++i) {
+		std::string scoreText = std::to_string(i + 1) + ". " + std::to_string(scores[i]);
+		SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.c_str(), scoreColor);
+		SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+		SDL_Rect dstRect = { 320, 180 + (i - start) * 40, scoreSurface->w, scoreSurface->h };
+		SDL_RenderCopy(renderer, scoreTexture, NULL, &dstRect);
+
+		SDL_FreeSurface(scoreSurface);
+		SDL_DestroyTexture(scoreTexture);
+	}
+
+	// Nút thoát
+	SDL_Rect closeButton = { 623, 50, 40, 40 };
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &closeButton);
+	SDL_Surface* xSurface = TTF_RenderText_Solid(font, "X", scoreColor);
+	SDL_Texture* xTexture = SDL_CreateTextureFromSurface(renderer, xSurface);
+	SDL_Rect xRect = { 630, 55, xSurface->w, xSurface->h };
+	SDL_RenderCopy(renderer, xTexture, NULL, &xRect);
+	SDL_FreeSurface(xSurface);
+	SDL_DestroyTexture(xTexture);
+
 	TTF_CloseFont(font);
+	SDL_RenderPresent(renderer);
 }
 
 void renderPauseButton(SDL_Renderer* renderer) {

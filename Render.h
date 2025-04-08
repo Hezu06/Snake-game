@@ -13,9 +13,13 @@ SDL_Renderer* createRenderer(SDL_Window* window);
 
 void drawGameplayBackground(SDL_Window* window, SDL_Renderer* renderer);
 
-void renderStartScreen(SDL_Window* window, SDL_Renderer* renderer);
+void renderMainMenu(SDL_Renderer* renderer, int selected);
 
-void renderPressStart(SDL_Renderer* renderer);
+int showMenu(SDL_Renderer* renderer);
+
+void renderHighScore(SDL_Renderer* renderer, const std::vector<int>& score, int scrollOffset);
+
+void renderStartScreen(SDL_Window* window, SDL_Renderer* renderer);
 
 void renderPauseButton(SDL_Renderer* renderer);
 
