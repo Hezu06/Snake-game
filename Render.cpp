@@ -31,7 +31,7 @@ void drawGameplayBackground(SDL_Window* window, SDL_Renderer* renderer) {
 
 void renderStartScreen(SDL_Window* window, SDL_Renderer* renderer)
 {
-	SDL_Surface* surface = IMG_Load("Src/Start_Screen.jpg");
+	SDL_Surface* surface = IMG_Load("Src/menu.png");
 	if (surface == nullptr) logErrorAndExit("IMG_Load", IMG_GetError());
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -56,13 +56,13 @@ void renderMainMenu(SDL_Renderer* renderer, int selected) {
 	for (int i = 0; i < 3; ++i) {
 		SDL_Color color = { 255, 255, 255 }; // White
 		if (i == selected) {
-			color = { 255, 215, 0 }; // Gold for selected
+			color = { 255, 0, 0 }; // Red for selected
 		}
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, options[i], color);
 		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-		SDL_Rect dstRect = { 300, 400 + i * 80, surface->w, surface->h };
+		SDL_Rect dstRect = { 300, 440 + i * 80, surface->w, surface->h };
 		SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 
 		SDL_FreeSurface(surface);
@@ -81,9 +81,9 @@ int showMenu(SDL_Renderer* renderer) {
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		if (mouseX >= 300 && mouseX <= 600) {
-			if (mouseY >= 400 && mouseY <= 480) selected = 0;
-			else if (mouseY >= 480 && mouseY <= 560) selected = 1;
-			else if (mouseY >= 560 && mouseY <= 640) selected = 2;
+			if (mouseY >= 440 && mouseY <= 520) selected = 0;
+			else if (mouseY >= 520 && mouseY <= 600) selected = 1;
+			else if (mouseY >= 600 && mouseY <= 680) selected = 2;
 		}
 
 		renderMainMenu(renderer, selected);
@@ -94,10 +94,10 @@ int showMenu(SDL_Renderer* renderer) {
 				return 2; // Exit
 			}
 			if (e.type == SDL_KEYDOWN) {
-				if (e.key.keysym.sym == SDLK_UP) {
+				if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w) {
 					selected = (selected + 2) % 3;
 				}
-				else if (e.key.keysym.sym == SDLK_DOWN) {
+				else if (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s) {
 					selected = (selected + 1) % 3;
 				}
 				else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
@@ -107,9 +107,9 @@ int showMenu(SDL_Renderer* renderer) {
 			else if (e.type == SDL_MOUSEBUTTONDOWN) {
 				if (e.button.button == SDL_BUTTON_LEFT) {
 					if (mouseX >= 300 && mouseX <= 600) {
-						if (mouseY >= 400 && mouseY <= 480) return 0; // Play
-						else if (mouseY >= 480 && mouseY <= 560) return 1; // High Score
-						else if (mouseY >= 560 && mouseY <= 640) return 2; // Exit
+						if (mouseY >= 440 && mouseY <= 520) return 0; // Play
+						else if (mouseY >= 520 && mouseY <= 600) return 1; // High Score
+						else if (mouseY >= 600 && mouseY <= 680) return 2; // Exit
 					}
 				}
 			}

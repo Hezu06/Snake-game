@@ -32,7 +32,7 @@ int main(int argc, char* args[]) {
 			backToMenu = false;
 			std::cout << "Waiting for player to start the game" << std::endl;
 			int choice = showMenu(renderer);
-			if (choice == 2) {
+			if (choice == 2) { // Exit
 				start = true;
 				break;
 			}
