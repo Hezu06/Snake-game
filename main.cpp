@@ -7,7 +7,6 @@
 #include "Music.h"
 
 int main(int argc, char* args[]) {
-	std::vector<int> scores(50, 0);
 	if (!init()) {
 		std::cout << "Failed" << std::endl;
 	}
@@ -15,8 +14,22 @@ int main(int argc, char* args[]) {
 		SDL_Window* window = initSDL();
 		SDL_Renderer* renderer = createRenderer(window);
 		Music music;
+		bool backToMenu;
+
+		std::ofstream scoreFile("score.txt"); // tao file score.txt
+		if (scoreFile.is_open()) {
+			scoreFile << 0 << "\n";
+			scoreFile.close();
+		}
+		else {
+			std::cerr << "Unable to open score file." << std::endl;
+		}
+
+		std::vector<int> scores;
+
 		while (!start) {
 			renderStartScreen(window, renderer);
+			backToMenu = false;
 			std::cout << "Waiting for player to start the game" << std::endl;
 			int choice = showMenu(renderer);
 			if (choice == 2) {
@@ -25,7 +38,7 @@ int main(int argc, char* args[]) {
 			else if (choice == 1) { // High Score
 				bool inHighScore = true;
 				int scrollOffset = 0;
-
+				scores = sortScoresFromFile("score.txt");
 				while (inHighScore) {
 					renderHighScore(renderer, scores, scrollOffset);
 					SDL_Event e;
@@ -78,25 +91,22 @@ int main(int argc, char* args[]) {
 					SDL_Point food = generateFood(snake.getBody());
 					SDL_RenderClear(renderer);
 
-					std::ofstream scoreFile("score.txt"); // tao file score.txt
-					if (scoreFile.is_open()) {
-						scoreFile << 0 << "\n";
-						scoreFile.close();
-					}
-					else {
-						std::cerr << "Unable to open score file." << std::endl;
-					}
+					
 
 					// game loop
 					Uint32 lastMoveTime = 0;
 
 					while (running) {
+						
 						Uint32 frameStart = SDL_GetTicks();
 
 						if (!paused) {
 							int snakeSpeed = snake.getSnakeSpeed();
+							if (backToMenu) {
+								break;
+							}
 							Uint32 currentTime = SDL_GetTicks();
-							handleInput(snake, renderer);
+							handleInput(snake, renderer, backToMenu);
 							if (snake.eatFood(food)) {
 								Mix_PlayChannel(-1, music.eatSound, 0);
 								food = generateFood(snake.getBody());
@@ -130,7 +140,10 @@ int main(int argc, char* args[]) {
 							}
 						}
 						else {
-							handleInput(snake, renderer);
+							handleInput(snake, renderer, backToMenu);
+							if (backToMenu) {
+								break;
+							}
 						}
 
 						Uint32 frameTime = SDL_GetTicks() - frameStart;
@@ -138,13 +151,18 @@ int main(int argc, char* args[]) {
 							SDL_Delay(8 - frameTime);
 						}
 					}
-					start = true;
-					break;
+					if (backToMenu) {
+						break;
+					}
+					else {
+						start = true;
+						break;
+					}
 				}
 			}
 		}
 		music.~music();
-		remove("score.txt");
+		//remove("score.txt");
 		cleanUp(window, renderer);
 	}
 	return 0;

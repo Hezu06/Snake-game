@@ -17,7 +17,7 @@ SDL_Point generateFood(const std::vector <SDL_Point>& snakeBody) {
 	return food;
 }
 
-void handleInput(Snake& snake, SDL_Renderer* renderer) {
+void handleInput(Snake& snake, SDL_Renderer* renderer, bool &backToMenu) {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT) {
@@ -55,14 +55,18 @@ void handleInput(Snake& snake, SDL_Renderer* renderer) {
 					paused = true;
 				}
 			}
-			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 400 && event.button.y <= 500) { // resume button
+			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 200 && event.button.y <= 300) { // resume button
 				paused = false;
 			}
-			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 500 && event.button.y <= 600) { // restart button
+			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 300 && event.button.y <= 400) { // restart button
 				paused = false;
 				snake.setSnakeSpeed(120);				
 				score = 0; // reset score
 				snake = Snake(300, 300); // reset snake
+			}
+			else if (paused && event.button.x >= 400 && event.button.x <= 500 && event.button.y >= 400 && event.button.y <= 500) { // menu button
+				paused = false;
+				backToMenu = true; 
 			}
 		}
 	}
@@ -77,4 +81,18 @@ void updateScoreFile(int score) {
 	else {
 		std::cerr << "Unable to open score file." << std::endl;
 	}
+}
+
+std::vector<int> sortScoresFromFile(const std::string& filename) {
+	std::ifstream file(filename);
+	std::vector<int> scores;
+	int score;
+	if (file.is_open()) {
+		while (file >> score) {
+			scores.push_back(score);
+		}
+		file.close();
+	}
+	std::sort(scores.begin(), scores.end(), std::greater<int>());
+	return scores;
 }
