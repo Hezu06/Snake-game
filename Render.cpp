@@ -199,8 +199,7 @@ void renderPauseScreen(SDL_Renderer* renderer) {
 	SDL_Color textColor = { 255, 255, 255 };
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Paused", textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-	SDL_Rect textRect = { SCREEN_WIDTH / 2 - textSurface->w / 2, SCREEN_HEIGHT / 2 - textSurface->h / 2, textSurface->w, textSurface->h };
+	SDL_Rect textRect = { SCREEN_WIDTH / 2 - textSurface->w / 2, SCREEN_HEIGHT / 4 - textSurface->h / 4, textSurface->w, textSurface->h };
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
 
@@ -212,7 +211,7 @@ void renderPauseScreen(SDL_Renderer* renderer) {
 	if (!playTexture) {
 		logErrorAndExit("CreateTexture", SDL_GetError());
 	}
-	SDL_Rect playDes = { 400, 400, 100, 100 };
+	SDL_Rect playDes = { 400, 200, 100, 100 };
 	SDL_RenderCopy(renderer, playTexture, NULL, &playDes);
 
 	SDL_Surface* restartSurface = IMG_Load("Src/restartButton.png");
@@ -223,13 +222,29 @@ void renderPauseScreen(SDL_Renderer* renderer) {
 	if (!restartTexture) {
 		logErrorAndExit("CreateTexture", SDL_GetError());
 	}
-	SDL_Rect restartDes = { 400, 500, 100, 100 };
+	SDL_Rect restartDes = { 400, 300, 100, 100 };
 	SDL_RenderCopy(renderer, restartTexture, NULL, &restartDes);
 
+	SDL_Surface* mainMenuSurface = IMG_Load("Src/menu_button.png");
+	if (!mainMenuSurface) {
+		logErrorAndExit("IMG_Load", IMG_GetError());
+	}
+	SDL_Texture* mainMenuTexture = SDL_CreateTextureFromSurface(renderer, mainMenuSurface);
+	if (!mainMenuTexture) {
+		logErrorAndExit("CreateTexture", SDL_GetError());
+	}
+	SDL_Rect mainMenuDes = { 400, 400, 100, 100 };
+	SDL_RenderCopy(renderer, mainMenuTexture, NULL, &mainMenuDes);
 
 	SDL_RenderPresent(renderer);
 	SDL_FreeSurface(textSurface);
 	SDL_DestroyTexture(textTexture);
+	SDL_FreeSurface(playSurface);
+	SDL_DestroyTexture(playTexture);
+	SDL_FreeSurface(restartSurface);
+	SDL_DestroyTexture(restartTexture);
+	SDL_FreeSurface(mainMenuSurface);
+	SDL_DestroyTexture(mainMenuTexture);
 	TTF_CloseFont(font);
 }
 
