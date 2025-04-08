@@ -33,7 +33,8 @@ int main(int argc, char* args[]) {
 			std::cout << "Waiting for player to start the game" << std::endl;
 			int choice = showMenu(renderer);
 			if (choice == 2) {
-				return 0; 
+				start = true;
+				break;
 			}
 			else if (choice == 1) { // High Score
 				bool inHighScore = true;
@@ -162,8 +163,11 @@ int main(int argc, char* args[]) {
 			}
 		}
 		music.~music();
-		//remove("score.txt");
+		Mix_Quit();
 		cleanUp(window, renderer);
+		SDL_Quit();
+		remove("score.txt");
+		std::cout << "Game Over" << std::endl;
 	}
 	return 0;
 }
