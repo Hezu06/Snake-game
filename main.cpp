@@ -13,9 +13,8 @@ int main(int argc, char* args[]) {
 	else {
 		SDL_Window* window = initSDL();
 		SDL_Renderer* renderer = createRenderer(window);
-		bool start = false;
 		Music music;
-		while (!start) {
+		while (!start) {	
 			renderStartScreen(window, renderer);
 			renderPressStart(renderer);
 			std::cout << "Waiting for player to start the game" << std::endl;
@@ -34,9 +33,6 @@ int main(int argc, char* args[]) {
 					SDL_Point food = generateFood(snake.getBody());
 					SDL_RenderClear(renderer);
 
-					// game loop
-					Uint32 lastMoveTime = 0;
-
 					std::ofstream scoreFile("score.txt"); // tao file score.txt
 					if (scoreFile.is_open()) {
 						scoreFile << 0 << "\n";  
@@ -46,7 +42,12 @@ int main(int argc, char* args[]) {
 						std::cerr << "Unable to open score file." << std::endl;
 					}
 
+					// game loop
+					Uint32 lastMoveTime = 0;
+					
 					while (running) {
+						Uint32 frameStart = SDL_GetTicks();
+						
 						if (!paused) {
 							int snakeSpeed = snake.getSnakeSpeed();
 							Uint32 currentTime = SDL_GetTicks();
@@ -66,6 +67,9 @@ int main(int argc, char* args[]) {
 								if (snake.checkCollision()) {
 									Mix_PlayChannel(-1, music.gameOverSound, 0);
 									updateScoreFile(score);
+									if (score > highScore) {
+										highScore = score;
+									}
 									showGameOver(renderer, snake, score, food);
 								}
 
@@ -75,12 +79,18 @@ int main(int argc, char* args[]) {
 								snake.render(renderer);
 								renderPauseButton(renderer);
 								renderPlayerScore(renderer, score);
+								renderHighScore(renderer, highScore);
 								SDL_RenderPresent(renderer);
 								Mix_HaltChannel(-1);
 							}
 						}
 						else {
 							handleInput(snake, renderer);
+						}
+
+						Uint32 frameTime = SDL_GetTicks() - frameStart;
+						if (frameTime < 8) {
+							SDL_Delay(8 - frameTime);
 						}
 					}
 					start = true;

@@ -143,14 +143,33 @@ void renderPlayerScore(SDL_Renderer* renderer, int& score) {
 
 	std::string point = "Score: " + std::to_string(score);
 
-	SDL_Color textColor = { 6, 43, 19 };
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, point.c_str(), textColor);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_Rect textRect = { 600, 50, textSurface->w, textSurface->h };
-	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+	SDL_Color scoreColor = { 6, 43, 19 };
+	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, point.c_str(), scoreColor);
+	SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+	SDL_Rect scoreRect = { 600, 50, scoreSurface->w, scoreSurface->h };
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
 
-	SDL_FreeSurface(textSurface);
-	SDL_DestroyTexture(textTexture);
+	
+
+	SDL_FreeSurface(scoreSurface);
+	SDL_DestroyTexture(scoreTexture);
+}
+
+void renderHighScore(SDL_Renderer* renderer, int& highScore) {
+	TTF_Font* font = TTF_OpenFont("Font/font.ttf", 24);
+	if (!font) {
+		SDL_Log("Failed to load font : %s", TTF_GetError());
+		return;
+	}
+	std::string highScoreText = "High Score: " + std::to_string(highScore);
+	SDL_Color highScoreColor = { 240, 89, 55 };
+	SDL_Surface* highScoreSurface = TTF_RenderText_Solid(font, highScoreText.c_str(), highScoreColor);
+	SDL_Texture* highScoreTexture = SDL_CreateTextureFromSurface(renderer, highScoreSurface);
+	SDL_Rect highScoreRect = { 5, 50, highScoreSurface->w, highScoreSurface->h };
+	SDL_RenderCopy(renderer, highScoreTexture, NULL, &highScoreRect);
+
+	SDL_FreeSurface(highScoreSurface);
+	SDL_DestroyTexture(highScoreTexture);
 }
 
 void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point food)

@@ -27,4 +27,6 @@ void renderFood(SDL_Renderer* renderer, SDL_Point food);
 
 void renderPlayerScore(SDL_Renderer* renderer, int& score);
 
+void renderHighScore(SDL_Renderer* renderer, int& highScore);
+
 void showGameOver(SDL_Renderer* renderer, Snake& snake, int& score, SDL_Point food);
