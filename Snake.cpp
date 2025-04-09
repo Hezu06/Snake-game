@@ -3,6 +3,8 @@
 void Snake::move() {
 	SDL_Point head = body.front();
 
+	direction = nextDirection; // Update direction to the next direction
+
 	switch (direction) {
 	case UP:
 		head.y -= snakeSize;
@@ -22,7 +24,7 @@ void Snake::move() {
 		body.pop_back();
 	}
 	else {
-	hasEaten = false;
+		hasEaten = false;
 	}
 }
 void Snake::grow() {
@@ -39,16 +41,16 @@ bool Snake::eatFood(SDL_Point food) {
 
 void Snake::setDirection(Direction newDirection) {
 	if (newDirection == UP && direction != DOWN) {
-		direction = newDirection;
+		nextDirection = newDirection;
 	}
 	else if (newDirection == DOWN && direction != UP) {
-		direction = newDirection;
+		nextDirection = newDirection;
 	}
 	else if (newDirection == LEFT && direction != RIGHT) {
-		direction = newDirection;
+		nextDirection = newDirection;
 	}
 	else if (newDirection == RIGHT && direction != LEFT) {
-		direction = newDirection;
+		nextDirection = newDirection;
 	}
 }
 
@@ -75,7 +77,7 @@ bool Snake::checkCollision() {
 }
 
 void Snake::render(SDL_Renderer* renderer) {
-	SDL_SetRenderDrawColor(renderer, 5, 38, 22, 255);
+	SDL_SetRenderDrawColor(renderer, 3, 22, 10, 255);
 	for (SDL_Point point : body) {
 		SDL_Rect rect = { point.x, point.y, snakeSize, snakeSize };
 		SDL_RenderFillRect(renderer, &rect);

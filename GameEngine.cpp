@@ -27,15 +27,19 @@ void handleInput(Snake& snake, SDL_Renderer* renderer, bool &backToMenu) {
 			switch (event.key.keysym.sym) {
 			case SDLK_w: case SDLK_UP:
 				snake.setDirection(Snake::UP);
+				SDL_Delay(50); // delay to prevent immediate direction change
 				break;
 			case SDLK_s: case SDLK_DOWN:
 				snake.setDirection(Snake::DOWN);
+				SDL_Delay(50);
 				break;
 			case SDLK_a: case SDLK_LEFT:
 				snake.setDirection(Snake::LEFT);
+				SDL_Delay(50);
 				break;
 			case SDLK_d: case SDLK_RIGHT:
 				snake.setDirection(Snake::RIGHT);
+				SDL_Delay(50);
 				break;
 			case SDLK_ESCAPE: // pause game
 				if (!paused) {

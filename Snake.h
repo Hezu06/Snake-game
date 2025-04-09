@@ -10,6 +10,7 @@ public:
 		body.push_back({ startX, startY });
 		body.push_back({ startX - snakeSize, startY });
 		direction = RIGHT;
+		nextDirection = RIGHT;
 	}
 	std::vector <SDL_Point> getBody() {
 		return body;
@@ -32,6 +33,7 @@ public:
 private:
 	std::vector <SDL_Point> body;
 	Direction direction;
+	Direction nextDirection;
 	bool hasEaten = false;
 	static constexpr int snakeSize = 25;
 	int snakeSpeed = 120;
